@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>McNulty</title>
+    <meta charset="utf-8">
+
+    <style type="text/css">
+      body {
+        font-family: "Proxima-Nova";
+        margin: 0em 15em;
+      }
+      #feature_selection, #results {
+        margin-right: 3em;
+        float: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="header">
+      <div>
+        <h1>Predicting Recidivism</h1>
+        <p>Algorithms designed to predict recidivism have a habit of favoring white offenders. Choose which variables you'd like to build a model off of, then see how if performs for different groups.</p>
+      </div>
+    </div>
+    <div id = "feature_selection"
+      <div>
+        <form id="boxes_home">Available Features
+          <br>
+          <input type="checkbox" value="selectAll" onclick="toggle(this)">Select All</input>
+        </form>
+      </div>
+    </div>
+    <div id="results">
+      <button id="build_model" onclick=buildModel()>Build and Score Model</button>
+    </div>
+
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+      // Build Check Boxes
+      var boxes_home = document.getElementById("boxes_home")
+
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
+      function createCheckBox(col_name) {
+        var label = document.createElement("label");
+        var box = document.createElement("input");
+        box.type = "checkbox";
+        box.name = "feature";
+        box.value = col_name;
+        var text = col_name.split('_').join(' ');
+        text = capitalizeFirstLetter(text)
+
+        label.appendChild(document.createElement('br'))
+        label.appendChild(box);
+        label.appendChild(document.createTextNode(text));
+        return label;
+      }
+
+      $.ajax({
+          type: "GET",
+          contentType: "application/json; charset=utf-8",
+          url: "/build_radio_buttons",
+          dataType: "json",
+          async: true,
+          success: function(data){
+            var feature = data["available_features"];
+            for (i=0; i<feature.length; i++) {
+              test_button = createCheckBox(feature[i]);
+              boxes_home.append(test_button);
+            }
+          },
+          error: function(dummy) {
+            console.log("createCheckBox ajax call failed")
+          }
+        })
+
+      // Select All Checkbox
+      function toggle(source) {
+        checkboxes = document.getElementsByName("feature")
+        for(i=0; i<checkboxes.length; i++) {
+          checkboxes[i].checked = source.checked;
+        }
+      }
+
+      // Build Table
+      function deleteTableById(title) {
+        table = document.getElementById(title);
+        if(table) {table.parentNode.removeChild(table);}
+      }
+
+      function buildTable(title, values) {
+        // Delete existing table if it exists
+        deleteTableById(title)
+
+        var body = document.getElementById('results');
+        var table = document.createElement('table');
+        table.setAttribute("id", title);
+        // table.setAttribute("align", "right")
+
+        // Title Row
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        var text = document.createTextNode(title);
+        th.appendChild(text);
+        th.setAttribute("colspan", 2);
+        tr.appendChild(th);
+        table.appendChild(tr);
+
+        // Data Row
+        var matrix = buildConfusionMatrix(title, values);
+        console.log(matrix);
+        var tr = document.createElement('tr');
+        var td = document.createElement('td');
+        td.appendChild(matrix);
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        var scores = buildScoreMatrix(title, values);
+        var td = document.createElement('td');
+        td.appendChild(scores);
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        // Append Table
+        body.appendChild(table)
+      }
+
+      function buildConfusionMatrix(title, values) {
+        //IN: title (string), values (array)
+        var body = document.getElementsByTagName('body')[0];
+        var table = document.createElement('table');
+        table.setAttribute("id", title);
+
+        // Title Row
+        // var tr = document.createElement('tr');
+        // var th = document.createElement('th');
+        // var text = document.createTextNode(title);
+        // th.appendChild(text);
+        // th.setAttribute("colspan", 4);
+        // tr.appendChild(th);
+        // table.appendChild(tr);
+
+        // Predictions Row
+        var tr = document.createElement('tr');
+          // Col One
+        var th = document.createElement('th');
+        th.setAttribute("colspan", 2);
+        tr.appendChild(th)
+          // Col Two
+        var th = document.createElement('th');
+        th.setAttribute("colspan", 2);
+        var text = document.createTextNode("Predictions");
+        th.appendChild(text);
+        tr.appendChild(th);
+        table.appendChild(tr);
+
+        // Predictions - Yes, No
+        var tr = document.createElement('tr');
+          // Col One
+        var th = document.createElement('th');
+        th.setAttribute("colspan", 2);
+        tr.appendChild(th)
+          // Col Two
+        var th = document.createElement('th');
+        var text = document.createTextNode("Yes");
+        th.appendChild(text);
+        tr.appendChild(th);
+          // Col Three
+        var th = document.createElement('th');
+        var text = document.createTextNode("No");
+        th.appendChild(text);
+        tr.appendChild(th);
+
+        table.appendChild(tr)
+
+        // Row Four
+        var tr = document.createElement('tr');
+          // Col One
+        var th = document.createElement('th');
+        th.setAttribute("rowspan", 2);
+        var text = document.createTextNode("Actual");
+        th.appendChild(text);
+        tr.appendChild(th);
+          // Col Two
+        var th = document.createElement('th');
+        var text = document.createTextNode("Yes");
+        th.appendChild(text);
+        tr.appendChild(th);
+          // Col Three
+        var td = document.createElement('td');
+        td.setAttribute("id", "TP");
+        var text = document.createTextNode(values[0]);
+        td.appendChild(text);
+        tr.appendChild(td);
+          // Col Four
+        var td = document.createElement('td');
+        td.setAttribute("id", "FN");
+        var text = document.createTextNode(values[1]);
+        td.appendChild(text);
+        tr.appendChild(td);
+
+        table.appendChild(tr);
+
+        // Row Five
+        var tr = document.createElement('tr');
+          // Col Two
+        var th = document.createElement('th');
+        var text = document.createTextNode("No");
+        th.appendChild(text);
+        tr.appendChild(th);
+          // Col Three
+        var td = document.createElement('td');
+        td.setAttribute("id", "FP");
+        var text = document.createTextNode(values[2]);
+        td.appendChild(text);
+        tr.appendChild(td);
+          // Col Four
+        var td = document.createElement('td');
+        td.setAttribute("id", "TN");
+        var text = document.createTextNode(values[3]);
+        td.appendChild(text);
+        tr.appendChild(td);
+
+        table.appendChild(tr);
+        // Add table
+        return table;
+      }
+
+      function buildScoreMatrix(title, values) {
+        var table = document.createElement('table');
+
+        // Accuracy
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        th.setAttribute("align", "right");
+        var text = document.createTextNode('Accuracy:');
+        th.appendChild(text);
+        tr.appendChild(th);
+        var td = document.createElement('td');
+        var text = document.createTextNode(values[7] + "%");
+        td.appendChild(text);
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        // Precision
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        th.setAttribute("align", "right");
+        var text = document.createTextNode('Precision:');
+        th.appendChild(text);
+        tr.appendChild(th);
+        var td = document.createElement('td');
+        var text = document.createTextNode(values[4] + "%");
+        td.appendChild(text);
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        // False Positive Rate
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        th.setAttribute("align", "right");
+        var text = document.createTextNode('False Positive Rate:');
+        th.appendChild(text);
+        tr.appendChild(th);
+        var td = document.createElement('td');
+        var text = document.createTextNode(values[5] + "%");
+        td.appendChild(text)
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        // False Negative Rate
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        th.setAttribute("align", "right");
+        var text = document.createTextNode('False Negative Rate:');
+        th.appendChild(text);
+        tr.appendChild(th);
+        var td = document.createElement('td');
+        var text = document.createTextNode(values[6] + "%");
+        td.appendChild(text);
+        tr.appendChild(td);
+        table.appendChild(tr);
+
+        return table
+      }
+
+      // Build that Model, Yo!!
+      function buildModel() {
+        <!-- Collect which features have been checked -->
+        var selectedFeatures = []
+        var features = document.getElementsByName("feature")
+        for(i=0; i<features.length; i++){
+          if (features[i].checked) {
+            selectedFeatures.push(features[i].value)
+          }
+        }
+        var jsonDict = {"selected_features": selectedFeatures};
+        console.log(jsonDict)
+
+        $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          url: "/build_model",
+          async: true,
+          data: JSON.stringify(jsonDict), //The json must be turned into a string
+          dataType: "json",
+          success: function(data) {
+            console.log("Model Built")
+            console.log(data)
+            buildTable("Everybody", data["Everybody"])
+            buildTable("White", data["White"])
+            // buildTable("Non-White", data["Non-White"])
+            buildTable("Black", data["Black"])
+           },
+           error: function(dummy) {
+             console.log("recordFeatures ajax call failed")
+           }
+        })
+      }
+
+    </script>
+  </body>
+</html>
