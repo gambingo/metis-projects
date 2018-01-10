@@ -28,9 +28,6 @@ from shapely.geometry import Polygon
 from shapely.geometry.polygon import Polygon
 from shapely.geometry.multipolygon import MultiPolygon
 
-import sys
-path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
-sys.path.append(path)
 from precinct import precinct
 from precinct import calculate_precinct_score
 from district import district
@@ -94,13 +91,13 @@ class redistricting:
         """
         if isinstance(k, int):
             self.k = k
-            self.pop_proportions = None
+            self.pop_per_dst = None
         elif isinstance(k, list):
-            margin = 0.0005
-            if (sum(k) > 1+margin) or (sum(k) < 1-margin):
-                raise Exception('Population proportions must sum to 1.')
+            # margin = 0.0005
+            # if (sum(k) > 1+margin) or (sum(k) < 1-margin):
+            #     raise Exception('Population proportions must sum to 1.')
             self.k = len(k)
-            self.pop_proportions = iter(k)
+            self.pop_per_dst = iter(k)
         else:
             msg = 'k must be an integer or list of percentages that sum to 1.'
             raise TypeError(msg)
@@ -140,9 +137,9 @@ class redistricting:
 
         if n_jobs == -1:
             self.n_jobs = cpu_count()
-            msg = ('Will split precinct scoring among {} CPUs.'
-                   '').format(self.n_jobs)
-            print(msg)
+            # msg = ('Will split precinct scoring among {} CPUs.'
+            #        '').format(self.n_jobs)
+            # print(msg)
         else:
             self.n_jobs = n_jobs
 
@@ -386,8 +383,8 @@ class redistricting:
                             self.compactness_method,
                             self.method_weights,
                             palette[color_num])
-        if self.pop_proportions:
-            new_dstrct.x = self.state_pop * next(self.pop_proportions)
+        if self.pop_per_dst:
+            new_dstrct.x = next(self.pop_per_dst)
         color_num += 1
         self.assign(seed_pt, new_dstrct)
         self.districts.append(new_dstrct)
@@ -404,8 +401,8 @@ class redistricting:
                                 self.compactness_method,
                                 self.method_weights,
                                 palette[color_num])
-            if self.pop_proportions:
-                new_dstrct.x = self.state_pop * next(self.pop_proportions)
+            if self.pop_per_dst:
+                new_dstrct.x = next(self.pop_per_dst)
             color_num += 1
             self.assign(seed_pt, new_dstrct)
             self.districts.append(new_dstrct)
