@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 from descartes.patch import PolygonPatch
 from datetime import datetime
 
-# import sys
-# path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
-# sys.path.append(path)
 from kojak import determine_bounds
 
 
@@ -50,11 +47,10 @@ lw_dstrct = 0.5
 palette = [colors['light green'], colors['light black'], colors['turq'],
            colors['burnt'], colors['egg'], colors['mustard'],
            colors['light blue']]
-#shuffle(palette)
-# palette = iter(palette + palette)
 
 
-def initialize_plot(precincts, figsize, weights, compactness_method):
+def initialize_plot(precincts, figsize=(10, 10),
+                    weights=None, compactness_method=None):
     """
     Initializes a plot with empty precincts.
     ---
@@ -78,16 +74,18 @@ def initialize_plot(precincts, figsize, weights, compactness_method):
     ax.set_ylim(lat_min, lat_max)
     ax.set_aspect(1)
     ax.axis('off')
-    txt = ('Population Weight: {}\n'
-           'Compactness Weight: {}\n'
-           'Compactness Method: {}\n'
-           'Efficiency Gap Weight: {}\n'
-           '').format(weights[0], weights[1],
-           compactness_method.title(), weights[2])
-    # ax.text(0.05, 0.05, txt, fontsize=12,
-    #              horizontalalignment='left',
-    #              verticalalignment='top',
-    #              transform = ax.transAxes)
+
+    if weights and compactness_method:
+        txt = ('Population Weight: {}\n'
+               'Compactness Weight: {}\n'
+               'Compactness Method: {}\n'
+               'Efficiency Gap Weight: {}\n'
+               '').format(weights[0], weights[1],
+               compactness_method.title(), weights[2])
+        # ax.text(0.05, 0.05, txt, fontsize=12,
+        #              horizontalalignment='left',
+        #              verticalalignment='top',
+        #              transform = ax.transAxes)
 
     for fl in glob.glob('../images/frames/*.png'):
         os.remove(fl)
@@ -144,7 +142,7 @@ def update_plot(ax, clstr, iteration):
     save_frame(iteration)
 
 
-def final_plot(ax, clusters, iteration, color_by_party=False):
+def final_plot(ax, clusters, iteration=None, color_by_party=False):
     """
     When making a gif, there is no need to update the plot every time.
     Instead, this will plot the final districts.
@@ -165,8 +163,9 @@ def final_plot(ax, clusters, iteration, color_by_party=False):
 
         patch = PolygonPatch(clstr.geometry, fc=fc, ec=ec, linewidth=lw)
         ax.add_patch(patch)
-    # ttl = 'Iteration: {}'.format(iteration)
-    # plt.title(ttl)
+    if iteration:
+        ttl = 'Iteration: {}'.format(iteration)
+        # plt.title(ttl)
     save_frame(iteration)
 
 
@@ -188,8 +187,11 @@ def label_move_counts(ax, precincts):
 
 def save_frame(iteration):
     """Saves the current figure"""
-    if not isinstance(iteration, str):
-        iteration = str("%05i"%iteration)
+    if iteration:
+        if not isinstance(iteration, str):
+            iteration = str("%05i"%iteration)
+    else:
+        iteration=''
 
     ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     plt.savefig('../images/frames/{}_{}.png'.format(iteration, ts),

@@ -91,13 +91,13 @@ class redistricting:
         """
         if isinstance(k, int):
             self.k = k
-            self.pop_per_dst = None
+            self.pop_proportions = None
         elif isinstance(k, list):
-            # margin = 0.0005
-            # if (sum(k) > 1+margin) or (sum(k) < 1-margin):
-            #     raise Exception('Population proportions must sum to 1.')
+            margin = 0.0005
+            if (sum(k) > 1+margin) or (sum(k) < 1-margin):
+                raise Exception('Population proportions must sum to 1.')
             self.k = len(k)
-            self.pop_per_dst = iter(k)
+            self.pop_proportions = iter(k)
         else:
             msg = 'k must be an integer or list of percentages that sum to 1.'
             raise TypeError(msg)
@@ -348,9 +348,9 @@ class redistricting:
 
         self.define_neighboorhoods()
         self.fig, self.ax = rpl.initialize_plot(self.precincts,
-                                                self.figsize,
-                                                self.weights,
-                                                self.compactness_method)
+            figsize = self.figsize,
+            weights = self.weights,
+            compactness_method = self.compactness_method)
         self.num_precincts = len(self.precincts)
 
 
@@ -383,8 +383,8 @@ class redistricting:
                             self.compactness_method,
                             self.method_weights,
                             palette[color_num])
-        if self.pop_per_dst:
-            new_dstrct.x = next(self.pop_per_dst)
+        if self.pop_proportions:
+            new_dstrct.x = self.state_pop * next(self.pop_proportions)
         color_num += 1
         self.assign(seed_pt, new_dstrct)
         self.districts.append(new_dstrct)
@@ -401,14 +401,14 @@ class redistricting:
                                 self.compactness_method,
                                 self.method_weights,
                                 palette[color_num])
-            if self.pop_per_dst:
-                new_dstrct.x = next(self.pop_per_dst)
+            if self.pop_proportions:
+                new_dstrct.x = self.state_pop * next(self.pop_proportions)
             color_num += 1
             self.assign(seed_pt, new_dstrct)
             self.districts.append(new_dstrct)
 
         # rpl.plot_seeds(self.ax, self.districts)
-        rpl.final_plot(self.ax, self.districts, self.iteration)
+        rpl.final_plot(self.ax, self.districts, iteration=self.iteration)
         print('Selected seeds.')
 
 
@@ -577,7 +577,7 @@ class redistricting:
         if best_pt == None:
             # If this is still None, we have a big problem. This is unexpected.
             # If it were to happen, this district should be passed for now.
-            rpl.final_plot(self.ax, self.districts, self.iteration)
+            rpl.final_plot(self.ax, self.districts, iteration=self.iteration)
             raise Exception('All neighbors are cornerstone precincts')
 
         return best_pt
@@ -687,7 +687,7 @@ class redistricting:
                     break
 
             if self.iteration%50 == 0:
-                rpl.final_plot(self.ax, self.districts, self.iteration)
+                rpl.final_plot(self.ax, self.districts, iteration=self.iteration)
 
 
     def results_table(self):
@@ -725,8 +725,8 @@ class redistricting:
             rpl.make_gif(self.timestamp, self.iteration)
             print('Took {} to make the gif.'.format(datetime.now()-t))
         else:
-            rpl.final_plot(self.ax, self.districts, self.iteration)
-            rpl.final_plot(self.ax, self.districts, self.iteration,
+            rpl.final_plot(self.ax, self.districts, iteration=self.iteration)
+            rpl.final_plot(self.ax, self.districts, iteration=self.iteration,
                            color_by_party=True)
 
         self.table = self.results_table()
