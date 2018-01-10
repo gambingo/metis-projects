@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 from descartes.patch import PolygonPatch
 from datetime import datetime
 
-import sys
-path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
-sys.path.append(path)
+# import sys
+# path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
+# sys.path.append(path)
 from kojak import determine_bounds
 
 

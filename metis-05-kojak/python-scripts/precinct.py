@@ -3,9 +3,9 @@ from math import pi
 from shapely.geometry import shape
 from shapely.ops import unary_union
 
-import sys
-path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
-sys.path.append(path)
+# import sys
+# path = '/Users/Joe/Documents/Metis/Projects/metis-05-kojak/python-scripts/'
+# sys.path.append(path)
 from kojak import threshold
 from kojak import wasted_votes
 
