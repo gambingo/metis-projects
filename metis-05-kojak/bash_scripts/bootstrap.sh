@@ -29,6 +29,9 @@ cd metis-05-kojak
 mkdir images
 cd images
 mkdir frames
+mkdir frames_stage_one
+mkdir frames_stage_two
+mkdir frames_stage_three
 mkdir gifs
 mkdir logs
 mkdir pickled_objects
