@@ -40,11 +40,13 @@ stage_two_dst = []
 for dst in stage_one.districts:
     if dst.current_pop == max(dst_pops):
         k = [2/5, 3/5]
-        model = redistricting(k=k, seed=42)
-        model.fit(dst)
     else:
-        model = redistricting(k=2, seed=42)
-        model.fit(dst)
+        k=2
+
+    model = redistricting(k=k, weights=[1, 1, 0], seed=42,
+                          compactness_method = 'sum',
+                          gif=False, n_jobs=-1, logging=True)
+    model.fit(dst)
     stage_two_dst += model.districts
 
 save_pickle(stage_two_dst, 'stage_two_dst_')
@@ -60,7 +62,9 @@ for dst in stage_two_dst:
         k = 3
     else:
         k = 2
-    model = redistricting(k=k, seed=42)
+    model = redistricting(k=k, weights=[1, 1, 0], seed=42,
+                          compactness_method = 'sum',
+                          gif=False, n_jobs=-1, logging=True)
     model.fit(dst)
     stage_three_dst += model.districts
 
