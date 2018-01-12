@@ -74,5 +74,5 @@ subprocess.call(command.split())
 print('Completed Stage Three')
 
 # Final Plot
-_, ax = rpl.initialize_plot(stage_two_dst)
-rpl.final_plot(ax, stage_two_dst, color_by_party=True)
+_, ax = rpl.initialize_plot(stage_three_dst)
+rpl.final_plot(ax, stage_three_dst, color_by_party=True)
