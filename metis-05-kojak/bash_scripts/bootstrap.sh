@@ -25,7 +25,7 @@ echo "Message: Installed all packages."
 
 # Make Directories
 cd
-cd metis-05-kojak
+cd metis-projects/metis-05-kojak
 mkdir images
 cd images
 mkdir frames
