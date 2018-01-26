@@ -44,6 +44,7 @@ class redistricting:
                  k=13,
                  weights=[1, 1, 0],
                  seed=0,
+                 pop_error_limit = 0.01,
                  compactness_method = 'sum',
                  method_weights = [1, 1],
                  figsize=(10,10),
@@ -70,6 +71,7 @@ class redistricting:
                     [w_population, w_compactness, w_competitiveness]
                     Weights of each heuristic function
         seed:       (int) State to seed the random generator
+        pop_error_limit:    (float) Threshold for percent error from target pop.
         compactness_method: (str) Method to use for calculating compactness.
                             Allowable methods are 'CSPC', 'circular',
                             'convexity', 'average', and 'sum'
@@ -104,6 +106,7 @@ class redistricting:
             raise TypeError(msg)
 
         self.weights = weights
+        self.pop_error_limit  = pop_error_limit
         self.precincts = []
         self.districts = []
 
@@ -634,7 +637,8 @@ class redistricting:
 
         if self.weights[0]:
             # pop = all([e<0.01 for e in self.pop_percent_error()])
-            pop = all([abs(dstrct.H_)<0.01 for dstrct in self.districts])
+            error_limit = lambda x: abs(x.H_)<self.pop_error_limit
+            pop = all([error_limit(dstrct) for dstrct in self.districts])
         else:
             pop = True
 
