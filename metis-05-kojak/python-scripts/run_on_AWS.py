@@ -51,7 +51,8 @@ for dst in stage_one.districts:
     model = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
-                          gif=False, n_jobs=-1, logging=True)
+                          gif=False, n_jobs=-1, logging=False,
+                          verbose_time=True)
     model.fit(dst)
     stage_two.append(model)
 
@@ -77,7 +78,8 @@ for dst in stage_two_dst:
     model = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
-                          gif=False, n_jobs=-1, logging=True)
+                          gif=False, n_jobs=-1, logging=False,
+                          verbose_time=True)
     model.fit(dst)
     stage_three.append(model)
 
