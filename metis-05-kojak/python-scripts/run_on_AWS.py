@@ -1,6 +1,4 @@
-"""
-Runs the redistricting algorithm on AWS so I can close my computer.
-"""
+"""Runs the redistricting algorithm on AWS so I can close my computer."""
 #Libraries
 import json
 import subprocess
@@ -27,6 +25,9 @@ k = [4/13, 4/13, 5/13]
 stage_one = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           compactness_method = 'sum',
                           gif=False, n_jobs=-1, logging=True)
+save_pickle(model, 'stage_one_')
+print('test pickle')
+
 stage_one.fit(data)
 
 save_pickle(model, 'stage_one_')
