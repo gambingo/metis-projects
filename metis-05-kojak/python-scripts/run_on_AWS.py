@@ -16,7 +16,7 @@ filepath = '../data/North-Carolina-2014.geojson'
 with open(filepath) as f:
     data = json.load(f)
 data = data['features']
-subset = slice_up_a_state(data, long_east=-83)
+#subset = slice_up_a_state(data, long_east=-83)
 
 # To prevent recurion depth limit on AWS.
 sys.setrecursionlimit(10000)
@@ -29,7 +29,7 @@ stage_one = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           compactness_method = 'sum',
                           gif=False, n_jobs=-1, logging=False,
                           verbose_time=True)
-stage_one.fit(subset)
+stage_one.fit(data)
 save_pickle(stage_one, 'stage_one')
 print('Succesfully pickled model.')
 
