@@ -30,60 +30,62 @@ stage_one = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           gif=False, n_jobs=-1, logging=False,
                           verbose_time=True)
 stage_one.fit(subset)
-
-save_pickle(stage_one, 'stage_one_')
+save_pickle(stage_one, 'stage_one')
 print('Succesfully pickled model.')
 
+command = 'cp ../images/frames/* ../images/frames_stage_one'
+subprocess.call(command.split())
+print('Completed Stage One')
 
-# command = 'cp ../images/frames/* ../images/frames_stage_one'
-# subprocess.call(command.split())
-# print('Completed Stage One')
-#
-# # Stage Two
-# dst_pops = [dst.current_pop for dst in stage_one.districts]
-# stage_two_dst = []
-# for dst in stage_one.districts:
-#     if dst.current_pop == max(dst_pops):
-#         k = [2/5, 3/5]
-#         pop_error_limit = 0.005
-#     else:
-#         k=2
-#         pop_error_limit = 0.005
-#
-#     model = redistricting(k=k, weights=[1, 1, 0], seed=42,
-#                           pop_error_limit=pop_error_limit,
-#                           compactness_method = 'sum',
-#                           gif=False, n_jobs=-1, logging=True)
-#     model.fit(dst)
-#     stage_two_dst += model.districts
-#
-# save_pickle(stage_two_dst, 'stage_two_dst_')
-# command = 'cp ../images/frames/* ../images/frames_stage_two'
-# subprocess.call(command.split())
-# print('Completed Stage Two')
-#
-# # Stage Three
-# dst_pops = [dst.current_pop for dst in stage_two_dst]
-# stage_three_dst = []
-# for dst in stage_two_dst:
-#     if dst.current_pop == max(dst_pops):
-#         k = 3
-#         pop_error_limit = 0.005
-#     else:
-#         k = 2
-#         pop_error_limit = 0.005
-#     model = redistricting(k=k, weights=[1, 1, 0], seed=42,
-#                           pop_error_limit=pop_error_limit,
-#                           compactness_method = 'sum',
-#                           gif=False, n_jobs=-1, logging=True)
-#     model.fit(dst)
-#     stage_three_dst += model.districts
-#
-# save_pickle(stage_three_dst, 'stage_three_dst')
-# command = 'cp ../images/frames/* ../images/frames_stage_three'
-# subprocess.call(command.split())
-# print('Completed Stage Three')
-#
-# # Final Plot
-# _, ax = rpl.initialize_plot(stage_three_dst)
-# rpl.final_plot(ax, stage_three_dst, color_by_party=True)
+# Stage Two
+dst_pops = [dst.current_pop for dst in stage_one.districts]
+stage_two = []
+for dst in stage_one.districts:
+    if dst.current_pop == max(dst_pops):
+        k = [2/5, 3/5]
+        pop_error_limit = 0.005
+    else:
+        k=2
+        pop_error_limit = 0.005
+
+    model = redistricting(k=k, weights=[1, 1, 0], seed=42,
+                          pop_error_limit=pop_error_limit,
+                          compactness_method = 'sum',
+                          gif=False, n_jobs=-1, logging=True)
+    model.fit(dst)
+    stage_two.append(model)
+
+save_pickle(stage_two, 'stage_two')
+command = 'cp ../images/frames/* ../images/frames_stage_two'
+subprocess.call(command.split())
+print('Completed Stage Two')
+
+# Stage Three
+stage_two_dst = []
+for model in stage_two:
+    stage_two_dst += model.districts
+
+dst_pops = [dst.current_pop for dst in stage_two_dst]
+stage_three = []
+for dst in stage_two_dst:
+    if dst.current_pop == max(dst_pops):
+        k = 3
+        pop_error_limit = 0.005
+    else:
+        k = 2
+        pop_error_limit = 0.005
+    model = redistricting(k=k, weights=[1, 1, 0], seed=42,
+                          pop_error_limit=pop_error_limit,
+                          compactness_method = 'sum',
+                          gif=False, n_jobs=-1, logging=True)
+    model.fit(dst)
+    stage_three.append(model)
+
+save_pickle(stage_three, 'stage_three')
+command = 'cp ../images/frames/* ../images/frames_stage_three'
+subprocess.call(command.split())
+print('Completed Stage Three')
+
+# Final Plot
+_, ax = rpl.initialize_plot(stage_three_dst)
+rpl.final_plot(ax, stage_three_dst, color_by_party=True)
