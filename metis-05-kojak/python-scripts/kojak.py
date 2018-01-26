@@ -35,7 +35,8 @@ def load_pickle(filename):
         filename (string):  filname of pickle file stored in the filepath
                             referenced below.
     """
-    filepath = '../images/pickled_objects/'
+    #filepath = '../images/pickled_objects/'
+    filepath = '../images/pulled_from_AWS/'
     with open(filepath + filename + '.p', 'rb') as picklefile:
         obj = pickle.load(picklefile)
     return obj

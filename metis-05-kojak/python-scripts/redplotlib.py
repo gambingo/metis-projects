@@ -47,7 +47,7 @@ lw_dstrct = 0.5
 palette = [colors['light green'], colors['light black'], colors['turq'],
            colors['burnt'], colors['egg'], colors['mustard'],
            colors['light blue']]
-
+           
 
 def initialize_plot(precincts, figsize=(10, 10),
                     weights=None, compactness_method=None):
