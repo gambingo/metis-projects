@@ -141,9 +141,9 @@ class redistricting:
 
         if n_jobs == -1:
             self.n_jobs = cpu_count()
-            # msg = ('Will split precinct scoring among {} CPUs.'
-            #        '').format(self.n_jobs)
-            # print(msg)
+            msg = ('Will split precinct scoring among {} CPUs.'
+                   '').format(self.n_jobs)
+            print(msg)
         else:
             self.n_jobs = n_jobs
 

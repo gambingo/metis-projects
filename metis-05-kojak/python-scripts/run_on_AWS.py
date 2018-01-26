@@ -23,7 +23,7 @@ sys.setrecursionlimit(10000)
 
 # Stage One
 k = [4/13, 4/13, 5/13]
-pop_error_limit = 0.005
+pop_error_limit = 0.02
 stage_one = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
