@@ -27,10 +27,11 @@ pop_error_limit = 0.005
 stage_one = redistricting(k=k, weights=[1, 1, 0], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
-                          gif=False, n_jobs=-1, logging=True)
+                          gif=False, n_jobs=-1, logging=True,
+                          verbose_time=True)
 stage_one.fit(subset)
 
-save_pickle(model, 'stage_one_')
+save_pickle(stage_one, 'stage_one_')
 print('Succesfully pickled model.')
 
 
