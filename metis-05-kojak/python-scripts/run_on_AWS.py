@@ -8,6 +8,7 @@ matplotlib.use('Agg')
 import sys
 sys.path.append('/home/ubuntu/metis-05-kojak/python-scripts')
 from redistricting import redistricting
+from redistricting import redplotlib as rpl
 from kojak import save_pickle
 from kojak import slice_up_a_state
 
