@@ -63,7 +63,7 @@ class district:
         self.regenerate_neighbors = True
 
         # Must recalculate F function
-        self.current_pop += pt.properties['population']
+        self.current_pop += pt.population
         self.rep_votes += pt.properties['sen_red']
         self.dem_votes += pt.properties['sen_blue']
         self.F_ = None
@@ -80,7 +80,7 @@ class district:
         ii = self.members.index(pt)
         self.members = self.members[0:ii] + self.members[ii+1:]
 
-        self.current_pop -= pt.properties['population']
+        self.current_pop -= pt.population
         self.rep_votes -= pt.properties['sen_red']
         self.dem_votes -= pt.properties['sen_blue']
         self.geometry = self.geometry.difference(pt.geometry)

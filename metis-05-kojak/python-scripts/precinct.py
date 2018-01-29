@@ -32,6 +32,9 @@ class precinct:
             data: GeoJSON data of a single precinct
         """
         self.properties = data['properties']
+        self.population = int(round(data['properties']['population']))
+        # When multipolygon precincts are split into multiple precincts, all
+        # stats are proportioned by area. This leads to non-integer populations 
         self.geometry = shape(data['geometry'])
         self.x = pop_stats[0]                   #target pop for districts
         self.greatest_pop = pop_stats[1]
@@ -86,7 +89,7 @@ class precinct:
         This is normalized so that the most populous precinct has a score
         of one and the least populous has score of zero.
         """
-        new_pop = self.properties['population'] + dstrct.current_pop
+        new_pop = self.population + dstrct.current_pop
         score = (self.x - new_pop)/self.x
         # Here the absolute value tries to prevent a district that only
         # needs a minor increase in population taking the most populous pt.

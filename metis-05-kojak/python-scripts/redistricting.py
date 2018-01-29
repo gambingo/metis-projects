@@ -148,6 +148,15 @@ class redistricting:
             self.n_jobs = n_jobs
 
 
+    def parameters(self):
+        """Prints out model parameters"""
+        print('Population Error Limit: {}%'.format(self.pop_error_limit*100))
+        print('Population Weight: ', self.weights[0])
+        print('Compactness Method: ', self.compactness_method)
+        print('Compactness Weight: ', self.weights[1])
+        print('Competiveness Weight: ', self.weights[2])
+
+
     def verbose_print(self,  msg, flag):
         """
         Only print when the relevant flag is true
