@@ -24,7 +24,7 @@ sys.setrecursionlimit(10000)
 # Stage One
 k = [4/13, 4/13, 5/13]
 pop_error_limit = 0.01
-stage_one = redistricting(k=k, weights=[0, 1, 0], seed=42,
+stage_one = redistricting(k=k, weights=[1, 1, 1], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
                           gif=False, n_jobs=-1, logging=False,
@@ -48,7 +48,7 @@ for dst in stage_one.districts:
         k=2
         pop_error_limit = 0.005
 
-    model = redistricting(k=k, weights=[0, 1, 0], seed=42,
+    model = redistricting(k=k, weights=[1, 1, 1], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
                           gif=False, n_jobs=-1, logging=False,
@@ -75,7 +75,7 @@ for dst in stage_two_dst:
     else:
         k = 2
         pop_error_limit = 0.005
-    model = redistricting(k=k, weights=[0, 1, 0], seed=42,
+    model = redistricting(k=k, weights=[1, 1, 1], seed=42,
                           pop_error_limit=pop_error_limit,
                           compactness_method = 'sum',
                           gif=False, n_jobs=-1, logging=False,
