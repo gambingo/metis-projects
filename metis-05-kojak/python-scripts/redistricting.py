@@ -335,7 +335,7 @@ class redistricting:
             new_length = len(self.precincts)
 
             if invalid_polygons > 0:
-                msg = ('Repaired {} self.precincts with '
+                msg = ('Repaired {} precincts with '
                        'invalid geometry.').format(invalid_polygons)
                 print(msg)
                 # msg = ('There are {} self.precincts with invalid geometry. '
