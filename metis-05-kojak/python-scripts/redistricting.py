@@ -318,7 +318,7 @@ class redistricting:
                 else:
                     msg = 'Geometry data is not of type Polygon or MultiPolygon'
                     raise Exception(msg)
-            msg = ('{} data points turned into {} self.precincts.'
+            msg = ('{} data points turned into {} precincts.'
                    '').format(len(data), len(self.precincts))
             print(msg)
 
@@ -338,7 +338,7 @@ class redistricting:
                 msg = ('Repaired {} precincts with '
                        'invalid geometry.').format(invalid_polygons)
                 print(msg)
-                # msg = ('There are {} self.precincts with invalid geometry. '
+                # msg = ('There are {} precincts with invalid geometry. '
                 #        'They have not been repaired.').format(invalid_polygons)
                 # warn(msg)
             msg = ('{} polygons were tossed for having zero area. That leaves {} '
